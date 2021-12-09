@@ -2,9 +2,11 @@ import React, {Component} from "react";
 import './Home.scss'
 
 /*
-07.45
-08.48 - 09.13 break
-09.18 -
+    07.35 (started)
+    08.48 - 09.13 (break)
+    09.18 - 10.31 (break)
+    10.54 - 22.35 (break)
+    00.12 (finished)
 * */
 
 class Home extends Component{
