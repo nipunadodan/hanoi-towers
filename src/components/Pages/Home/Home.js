@@ -9,32 +9,52 @@ import './Home.scss'
 
 class Home extends Component{
     state = {
-        towers:['a','b','c'],
-        discs : [
-            {disk:1,tower:'a'},
-            {disk:2,tower:'a'},
-            {disk:3,tower:'a'},
-            {disk:4,tower:'a'},
-            {disk:5,tower:'a'},
-        ],
-        activeDisk:0,
-        destinationTower:''
+        disks: {
+            a: [1, 2, 3, 4, 5],
+            b: [],
+            c: []
+        },
+        activeDisk:{
+            disk:'',
+            tower:''
+        },
     }
 
-    pickDisk = (disk) => (event) => {
-        this.setState({
-            activeDisk:disk
-        })
+    pickDisk = (disk, index, tower) => (event) => {
+        if(index === 0) {
+            this.setState({
+                activeDisk: {
+                    disk:disk,
+                    tower:tower
+                }
+            })
+        }else {
+            alert('You can\'t select lower discs')
+        }
     }
 
     moveDisk = (destinationTower) => (event) => {
-        let discs = [...this.state.discs];
-        discs[this.state.activeDisk-1] = {
-            ...discs[this.state.activeDisk-1],
-            tower:destinationTower
+        const {disks, activeDisk} = this.state
+
+        if(activeDisk.tower !=='') {
+            if(disks[destinationTower][0] > activeDisk.disk || disks[destinationTower].length === 0) {
+                disks[activeDisk.tower].shift(activeDisk.disk)
+                disks[destinationTower].unshift(activeDisk.disk)
+            }else {
+                alert('You can\'t move bigger disks on to smaller disks')
+            }
+        }else {
+            alert('Please select a disk to move here')
         }
+
         this.setState(prevState => ({
-            discs
+            discs :{
+                disks
+            },
+            activeDisk:{
+                disk:'',
+                tower:''
+            },
         }))
     }
 
@@ -43,33 +63,29 @@ class Home extends Component{
     }
 
     render() {
-        const {towers, discs, activeDisk} = this.state;
+        const {disks, activeDisk} = this.state;
         return (
             <div className={'towers'}>
                 {
-                    towers.map(tower => (
+                    Object.keys(disks).map((tower,index) => (
                         <div className={'tower'}>
                             <div onClick={this.moveDisk(tower)} className={'towerLabel'}>Tower {tower}</div>
                             {
-                                discs.map(x => {
-                                    if (x.tower === tower) {
-                                        return (<div
-                                                onClick={this.pickDisk(x.disk)}
-                                                className={'disk'}
-                                                style={{
-                                                    width: (x.disk * 20) + '%',
-                                                    background: (activeDisk === x.disk ? '#f00' : '#555')
-                                                }}
-                                            >{x.disk}</div>
-                                        )
-                                    } else {
-                                        return <></>
-                                    }
+                                disks[tower].map((x, index) => {
+                                    return (
+                                        <div
+                                            onClick={this.pickDisk(x, index, tower)}
+                                            className={'disk'}
+                                            style={{
+                                                width: (x * 20) + '%',
+                                                background: (activeDisk.disk === x ? '#f00' : '#555')
+                                            }}
+                                        >{x}</div>
+                                    )
                                 })
                             }
                         </div>
                     ))
-
                 }
             </div>
         )
