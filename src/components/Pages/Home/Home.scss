@@ -5,7 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  height: 50vh;
+  min-height: 50vh;
   color: #fff;
   .tower{
     border: 1px solid #aaa;
