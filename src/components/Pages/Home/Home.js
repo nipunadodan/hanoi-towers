@@ -11,6 +11,7 @@ import './Home.scss'
 
 class Home extends Component{
     state = {
+        moves:0,
         noOfDisks:5,
         noOfTowers:3,
         disks: {
@@ -19,39 +20,17 @@ class Home extends Component{
             3: []
         },
         activeDisk:{
-            disk:'',
-            tower:''
+            disk:0,
+            tower:0
         },
     }
 
-    handleChange = (event) => {
-        const {name, value} = event.target;
-        const {noOfTowers, noOfDisks,disks} = this.state;
-
-        if(name === 'noOfTowers') {
-            const towers = {};
-            for(let x=1; x <= value; x++){
-                towers[x] = []
-            }
-            towers[1] = [...Array(noOfDisks+1).keys()];
-            towers[1].shift()
-            console.log(noOfDisks)
-            this.setState({
-                noOfTowers: value,
-                disks:{
-                    ...towers,
-                }
-            })
-        }else if(name === 'noOfDisks'){
-            disks[1] = [...Array(parseInt(value)+1).keys()];
-            disks[1].shift()
-            this.setState({
-                noOfDisks: parseInt(value),
-                disks: {
-                    ...disks
-                }
-            })
-        }
+    changeDisks = (count) => (event) => {
+        console.log(count)
+        this.setState(prevState => ({
+            noOfDisks:(count === 'dn' ? prevState.noOfDisks-1 : prevState.noOfDisks+1)
+            //noOfDisks: prevState.noOfDisks+1
+        }),this.reset)
     }
 
     pickDisk = (disk, index, tower) => (event) => {
@@ -67,10 +46,24 @@ class Home extends Component{
         }
     }
 
+    reset = () => {
+        let towers = []
+        for(let x=1; x <= this.state.noOfTowers; x++){
+            towers[x] = []
+        }
+        towers[1] = [...Array(parseInt(this.state.noOfDisks)+1).keys()];
+        towers[1].shift()
+        this.setState({
+            moves:0,
+            disks: towers
+
+        })
+    }
+
     moveDisk = (destinationTower) => (event) => {
         const {disks, activeDisk} = this.state
 
-        if(activeDisk.tower !=='') {
+        if(activeDisk.tower !==0) {
             if(disks[destinationTower][0] > activeDisk.disk || disks[destinationTower].length === 0) {
                 disks[activeDisk.tower].shift(activeDisk.disk)
                 disks[destinationTower].unshift(activeDisk.disk)
@@ -82,18 +75,15 @@ class Home extends Component{
         }
 
         this.setState(prevState => ({
+            moves:prevState.moves+1,
             discs :{
                 disks
             },
             activeDisk:{
-                disk:'',
-                tower:''
+                disk:0,
+                tower:0
             },
         }))
-    }
-
-    componentDidMount() {
-
     }
 
     render() {
@@ -101,8 +91,12 @@ class Home extends Component{
         return (
             <>
                 <div className={'text-center'} style={{padding:'10px'}}>
-                    <input type={'number'} name={'noOfDisks'} style={{width:'40px', padding:'5px', margin:'5px 10px', textAlign:'center'}} value={this.state.noOfDisks} onChange={this.handleChange}/> Discs
-                    <input type={'number'} name={'noOfTowers'} style={{width:'40px', padding:'5px', margin:'5px 10px', textAlign:'center'}} value={this.state.noOfTowers} onChange={this.handleChange}/> Towers
+                    Disc count
+                    <span onClick={this.changeDisks('dn')} className={'button'}>-</span>
+                    <span style={{fontSize:'1.5em', 'margin':'0 5px'}}>{this.state.noOfDisks}</span>
+                    <span onClick={this.changeDisks('up')} className={'button'}>+</span>
+                    <span onClick={this.reset} style={{color: '#888', margin:'10px', cursor:'pointer'}}>Reset</span>
+                    <div style={{margin:'15px 0 10px'}}> Minimum Moves {2**this.state.noOfDisks - 1}</div>
                 </div>
                 <div className={'towers'}>
                     {
@@ -117,7 +111,7 @@ class Home extends Component{
                                                 onClick={this.pickDisk(x, index, tower)}
                                                 className={'disk'}
                                                 style={{
-                                                    width: (x / disks[tower].length * 90) + '%',
+                                                    width: (x / this.state.noOfDisks * 90) + '%',
                                                     background: (activeDisk.disk === x ? '#f00' : '#555')
                                                 }}
                                             >{x}</div>
@@ -128,6 +122,8 @@ class Home extends Component{
                         ))
                     }
                 </div>
+
+                <div className={'text-center'} style={{margin:'20px 0'}}>Moves by you <span style={{background:(this.state.moves <= 2**this.state.noOfDisks - 1 ? 'green' : 'red'), padding: '10px', color:'white', borderRadius: '5px', width:'20px', display:'inline-block'}}>{this.state.moves}</span></div>
             </>
         )
     }

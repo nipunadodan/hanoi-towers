@@ -1,6 +1,15 @@
 .text-center{
   text-align: center;
 }
+.button{
+  display: inline-block;
+  background: #dfdfdf;
+  padding: 10px 15px;
+  margin: 0 5px;
+  border-radius: 50%;
+  width: 10px;
+  cursor: pointer;
+}
 .towers{
   display: flex;
   justify-content: center;
