@@ -9,7 +9,11 @@
   border-radius: 50%;
   width: 10px;
   cursor: pointer;
+  &:hover{
+    background: #cfcfcf;
+  }
 }
+
 .towers{
   display: flex;
   justify-content: center;

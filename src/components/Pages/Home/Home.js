@@ -14,35 +14,90 @@ class Home extends Component{
         moves:0,
         noOfDisks:5,
         noOfTowers:3,
-        disks: {
-            1: [1, 2, 3, 4, 5],
-            2: [],
-            3: []
-        },
+        disks: {},
         activeDisk:{
             disk:0,
             tower:0
         },
+        won:0,
+        startTime:null,
+        timeLapsed:0
     }
 
-    changeDisks = (count) => (event) => {
-        console.log(count)
+    componentDidMount() {
+        this.reset()
+    }
+
+    startTimer = () => {
+        this.setState({
+            startTime: Date.now()
+        }, function () {
+            this.timer = setInterval(this.clock, 100)
+        })
+
+    }
+
+    stopTimer = () => {
+        clearInterval(this.timer)
+    }
+
+    clock = () => {
+        const {startTime} = this.state
+        const elapsedTime = Date.now() - startTime;
+        this.setState({
+            timeLapsed:elapsedTime / 1000
+        })
+    }
+
+    hasWon = () => {
+        const {disks, noOfDisks} = this.state
+        const towers = [...Array(noOfDisks+1).keys()];
+        towers.shift()
+        const won = disks.find((tower, index) => {
+            if(index !== 1){
+                return JSON.stringify(tower) === JSON.stringify(towers)
+            }
+            return false
+        })
+        if(won){
+            this.setState({
+                won:1
+            }, function () {
+                this.stopTimer()
+            })
+        }
+        console.log(towers)
+        console.log('disks')
+        console.log(disks)
+    }
+
+    avoidSelect = (e) => {
+        if(e.detail > 1 ){
+            e.preventDefault()
+        }
+    }
+
+    changeDisksCount = (change) => (event) => {
         this.setState(prevState => ({
-            noOfDisks:(count === 'dn' ? prevState.noOfDisks-1 : prevState.noOfDisks+1)
+            noOfDisks:(change === 'dn' ? prevState.noOfDisks-1 : prevState.noOfDisks+1)
             //noOfDisks: prevState.noOfDisks+1
         }),this.reset)
     }
 
     pickDisk = (disk, index, tower) => (event) => {
-        if(index === 0) {
-            this.setState({
-                activeDisk: {
-                    disk:disk,
-                    tower:tower
-                }
-            })
+        if(this.state.won){
+            alert('Game over! You\'ve won!!')
         }else {
-            alert('You can\'t select lower discs')
+            if (index === 0) {
+                this.setState({
+                    activeDisk: {
+                        disk: disk,
+                        tower: tower
+                    }
+                })
+            } else {
+                alert('You can\'t select lower discs')
+            }
         }
     }
 
@@ -55,8 +110,12 @@ class Home extends Component{
         towers[1].shift()
         this.setState({
             moves:0,
-            disks: towers
-
+            disks: towers,
+            won:0,
+            timeLapsed:0,
+            startTime:null
+        }, function () {
+            this.stopTimer()
         })
     }
 
@@ -83,32 +142,40 @@ class Home extends Component{
                 disk:0,
                 tower:0
             },
-        }))
+        }), function () {
+            this.hasWon()
+            if(this.state.moves === 1){
+                this.startTimer()
+            }
+        })
     }
 
     render() {
         const {disks, activeDisk} = this.state;
         return (
             <>
+                <h1 className={'text-center'}>Hanoi Towers</h1>
+                <p className={'text-center'} style={{color:'#888'}}>Instructions: Select a disc you want to move and then select the Tower name you want your selected disc to move.</p>
                 <div className={'text-center'} style={{padding:'10px'}}>
                     Disc count
-                    <span onClick={this.changeDisks('dn')} className={'button'}>-</span>
+                    <span onClick={this.changeDisksCount('dn')} onMouseDown={this.avoidSelect} className={'button'}>-</span>
                     <span style={{fontSize:'1.5em', 'margin':'0 5px'}}>{this.state.noOfDisks}</span>
-                    <span onClick={this.changeDisks('up')} className={'button'}>+</span>
-                    <span onClick={this.reset} style={{color: '#888', margin:'10px', cursor:'pointer'}}>Reset</span>
-                    <div style={{margin:'15px 0 10px'}}> Minimum Moves {2**this.state.noOfDisks - 1}</div>
+                    <span onClick={this.changeDisksCount('up')} onMouseDown={this.avoidSelect} className={'button'}>+</span>
+                    <span onClick={this.reset} onMouseDown={this.avoidSelect} style={{color: '#888', margin:'10px', cursor:'pointer'}}>Reset</span>
+                    <div style={{margin:'15px 0 10px'}}> The challenge is to finish the game in a minimum moves of {2**this.state.noOfDisks - 1}</div>
                 </div>
                 <div className={'towers'}>
                     {
                         Object.keys(disks).map((tower, index) => (
                             <div key={index} className={'tower'}>
-                                <div onClick={this.moveDisk(tower)} className={'towerLabel'}>Tower {tower}</div>
+                                <div onClick={this.moveDisk(tower)} onMouseDown={this.avoidSelect} className={'towerLabel'}>Tower {tower}</div>
                                 {
                                     disks[tower].map((x, index) => {
                                         return (
                                             <div
                                                 key={index}
                                                 onClick={this.pickDisk(x, index, tower)}
+                                                onMouseDown={this.avoidSelect}
                                                 className={'disk'}
                                                 style={{
                                                     width: (x / this.state.noOfDisks * 90) + '%',
@@ -123,7 +190,19 @@ class Home extends Component{
                     }
                 </div>
 
-                <div className={'text-center'} style={{margin:'20px 0'}}>Moves by you <span style={{background:(this.state.moves <= 2**this.state.noOfDisks - 1 ? 'green' : 'red'), padding: '10px', color:'white', borderRadius: '5px', width:'20px', display:'inline-block'}}>{this.state.moves}</span></div>
+                <div className={'text-center'} style={{margin:'20px 0'}}>
+                    Moves by you <span style={{background:(this.state.moves <= 2**this.state.noOfDisks - 1 ? 'green' : 'red'), padding: '10px', color:'white', borderRadius: '5px', width:'20px', display:'inline-block'}}>{this.state.moves}</span> Timer: {this.state.timeLapsed} s
+                    {
+                        this.state.won && this.state.moves === 2**this.state.noOfDisks - 1
+                            ? <p key={'won'} style={{color: 'green'}}>You won!</p>
+                            : [
+                                (this.state.won
+                                        ? <p key={'won2'}>You've completed the game but passed the minimum moves</p>
+                                    : ''
+                                )
+                            ]
+                    }
+                </div>
             </>
         )
     }
