@@ -157,7 +157,7 @@ class Home extends Component{
                 <h1 className={'text-center'}>Hanoi Towers</h1>
                 <p className={'text-center'} style={{color:'#888'}}>Instructions: Select a disc you want to move and then select the Tower name you want your selected disc to move.</p>
                 <div className={'text-center'} style={{padding:'10px'}}>
-                    Disc count
+                    Discs count
                     <span onClick={this.changeDisksCount('dn')} onMouseDown={this.avoidSelect} className={'button'}>-</span>
                     <span style={{fontSize:'1.5em', 'margin':'0 5px'}}>{this.state.noOfDisks}</span>
                     <span onClick={this.changeDisksCount('up')} onMouseDown={this.avoidSelect} className={'button'}>+</span>

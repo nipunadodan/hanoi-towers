@@ -20,8 +20,10 @@
   align-items: stretch;
   min-height: 50vh;
   color: #fff;
+  width: 95%;
+  margin: 0 auto;
   .tower{
-    border: 1px solid #aaa;
+    border: 1px solid #ddd;
     text-align: center;
     flex-grow: 1;
     display: flex;
