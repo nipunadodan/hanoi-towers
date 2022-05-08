@@ -1,11 +1,18 @@
+body{
+  background: #121726;
+  color: #34C1FE;
+}
+
 .text-center{
   text-align: center;
 }
 .button{
   display: inline-block;
-  background: #dfdfdf;
+  background: #34C1FE55;
+  border:1px solid #80D9FF;
+  box-shadow: 0px 0px 20px rgba(66, 198, 255, 0.63), inset 0px 0px 27px 10px rgba(35, 86, 107, 0.25);
   padding: 10px 15px;
-  margin: 0 5px;
+  margin: 0 15px;
   border-radius: 50%;
   width: 10px;
   cursor: pointer;
@@ -19,11 +26,11 @@
   justify-content: center;
   align-items: stretch;
   min-height: 50vh;
-  color: #fff;
+  color: #80D9FF;
   width: 95%;
   margin: 0 auto;
   .tower{
-    border: 1px solid #ddd;
+    border-bottom: 1px solid #34C1FE;
     text-align: center;
     flex-grow: 1;
     display: flex;
@@ -31,16 +38,18 @@
     justify-content: flex-end;
     align-items: center;
     .towerLabel{
-      color: #000;
+      color: #34C1FE;
       padding: 20px 0;
       cursor: pointer;
     }
     .disk{
-      background: #555;
+      background: #34C1FE55;
       padding: 10px 0;
-      border: 1px solid #aaaaaa;
+      border:1px solid #80D9FF;
       border-radius: 100px;
       cursor: pointer;
+      margin-bottom: 4px;
+      box-shadow: 0px 0px 20px rgba(66, 198, 255, 0.63), inset 0px 0px 27px 10px rgba(35, 86, 107, 0.25);
     }
   }
 }
