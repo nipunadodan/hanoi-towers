@@ -10,6 +10,10 @@ body{
   margin-right: 15px;
   margin-left: 15px;
 }
+.my-3{
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
 .button{
   display: inline-block;
   background: #34C1FE55;
@@ -18,18 +22,25 @@ body{
   padding: 10px 15px;
   margin: 0 15px;
   border-radius: 50px;
-  width: 10px;
   cursor: pointer;
   &:hover{
     background: #34C1FE88;
   }
 }
 
+.button-circular{
+  width: 10px;
+}
+
 .danger{
+  width: auto !important;
   color: #ff8080;
   background: rgba(254, 52, 136, 0.33) !important;
   border:1px solid #ff8080 !important;
   box-shadow: 0px 0px 20px rgba(255, 66, 66, 0.63), inset 0px 0px 27px 10px rgba(107, 35, 35, 0.25) !important;
+  &:hover{
+    background: rgba(255, 155, 155, 0.75);
+  }
 }
 
 .towers{

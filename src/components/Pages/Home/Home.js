@@ -179,6 +179,19 @@ class Home extends Component{
         })
     }
 
+    modalOpen = () => {
+        let scores = localStorage.getItem('htowers_scores');
+        if(scores){
+            scores = JSON.parse(scores);
+        }else{
+            scores = []
+        }
+        this.setState({
+            scores:scores,
+            modalOpen:true
+        })
+    }
+
     render() {
         const {disks, activeDisk} = this.state;
         return (
@@ -187,9 +200,9 @@ class Home extends Component{
                 <p className={'text-center mx-3'} >Instructions: Select a disc you want to move and then select the Tower name you want your selected disc to move.</p>
                 <div className={'text-center'} style={{padding:'10px'}}>
                     Discs count
-                    <span onClick={this.changeDisksCount('dn')} onMouseDown={this.avoidSelect} className={'button'}>-</span>
+                    <span onClick={this.changeDisksCount('dn')} onMouseDown={this.avoidSelect} className={'button button-circular'}>-</span>
                     <span style={{fontSize:'1.5em', 'margin':'0 10px',fontWeight:'bold'}}>{this.state.noOfDisks}</span>
-                    <span onClick={this.changeDisksCount('up')} onMouseDown={this.avoidSelect} className={'button'}>+</span>
+                    <span onClick={this.changeDisksCount('up')} onMouseDown={this.avoidSelect} className={'button button-circular'}>+</span>
                     <span onClick={this.reset} onMouseDown={this.avoidSelect} style={{color: '#888', margin:'10px', cursor:'pointer'}}>Reset</span>
                     <div style={{margin:'15px 15px 10px'}}>Minimum number moves: {2**this.state.noOfDisks - 1}</div>
                 </div>
@@ -225,52 +238,48 @@ class Home extends Component{
 
                 <div className={'text-center'} style={{margin:'20px 0'}}>
                     Moves by you <span style={{background:(this.state.moves <= 2**this.state.noOfDisks - 1 ? 'green' : 'red'), padding: '10px', color:'white', borderRadius: '5px', width:'20px', display:'inline-block',margin:'0 35px 0 5px'}}>{this.state.moves}</span> Timer: {this.state.timeLapsed} s
+                    <div className={'my-3'}>
+                        <div onClick={this.modalOpen} className={'button'}>Scores</div>
+                    </div>
                     {
-                        this.state.won && this.state.moves === 2**this.state.noOfDisks - 1 && this.state.modalOpen
-                            ?   <div className={'results text-center'}>
-                                    <div className={'results-inner'}>
-                                        <h2>Congrats!</h2>
-                                        <p key={'won'} style={{color: '#7af504'}}>You won!</p>
-                                        <div className={'score-board'}>
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Min. moves</th>
-                                                        <th>Your moves</th>
-                                                        <th>Time</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.state.scores.map(x => (
-                                                        <tr>
-                                                            <td>{x.minMoves}</td>
-                                                            <td>{x.moves}</td>
-                                                            <td>{x.time}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div style={{marginTop: '20px'}}>
-                                            <div onClick={this.resetScores} className={'button danger'}
-                                                 style={{width: 'auto'}}>Reset scores
-                                            </div>
-                                            <div onClick={this.modalClose} className={'button'} style={{width: 'auto'}}>Close</div>
-                                        </div>
+                        this.state.modalOpen ?
+                            <div className={'results text-center'}>
+                                <div className={'results-inner'}>
+                                    <h2>Congrats!</h2>
+                                    {
+                                        this.state.won && this.state.moves === 2**this.state.noOfDisks - 1
+                                            ? <p key={'won'} style={{color: '#7af504'}}>You won!</p>
+                                            : [this.state.won
+                                                ? <p key={'won'} style={{color: '#7af504'}}>You've completed the game but passed the minimum moves</p>
+                                                : <></>]
+                                    }
+                                    <div className={'score-board'}>
+                                        <table>
+                                            <thead>
+                                            <tr>
+                                                <th>Min. moves</th>
+                                                <th>Your moves</th>
+                                                <th>Time</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {this.state.scores.map(x => (
+                                                <tr>
+                                                    <td>{x.minMoves}</td>
+                                                    <td>{x.moves}</td>
+                                                    <td>{x.time}</td>
+                                                </tr>
+                                            ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style={{marginTop: '20px'}}>
+                                        <div onClick={this.resetScores} className={'button danger'}>Reset scores</div>
+                                        <div onClick={this.modalClose} className={'button'} style={{width: 'auto'}}>Close</div>
                                     </div>
                                 </div>
-                            : [
-                                (this.state.won && this.state.modalOpen
-                                        ? <div className={'results text-center'}>
-                                            <div className={'results-inner'}>
-                                                <h2>Congrats!</h2>
-                                                <p key={'won'} style={{color: '#7af504'}}>You've completed the game but passed the minimum moves</p>
-                                                <div onClick={this.modalClose} className={'times'}>×</div>
-                                            </div>
-                                        </div>
-                                    : ''
-                                )
-                            ]
+                            </div>
+                            : <></>
                     }
                 </div>
             </>
